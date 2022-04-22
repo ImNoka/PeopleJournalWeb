@@ -1,0 +1,503 @@
+﻿<html>
+<head>
+    <meta Cache-Control="no-store, no-cache, must-revalidate" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People journal</title>
+    <script>
+        function resetTb(tableId) {
+            while (document.getElementById(tableId).rows.length > 1)
+                document.getElementById(tableId).deleteRow(1);
+        }
+
+        async function getPeople() {
+            // Query
+            resetTb('peopleTable');
+            //setTableWidth('#divTab th', 5);
+            document.getElementById('meetsTable').style.display = 'none';
+            document.getElementById('peopleTable').style.display = 'block';
+            const response = await fetch("/api/people",
+                {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+            if (response.ok) {
+                // get data
+                let people = await response.json();
+                let rows = document.getElementById("pBody");
+                console.log(people);
+                // add to table
+                people.forEach(person => rows.append(rowPerson(person)));
+                //document.querySelector('#divTab th').style['width'] = 450 / 2+'px';
+            }
+        }
+        function rowPerson(person) {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", person.id);
+
+            const first_NameTd = document.createElement("td");
+            first_NameTd.append(person.first_Name);
+            tr.append(first_NameTd);
+
+            const last_NameTd = document.createElement("td");
+            last_NameTd.append(person.last_Name);
+            tr.append(last_NameTd);
+
+            const p_YearTd = document.createElement("td");
+            p_YearTd.append(person.p_Year);
+            tr.append(p_YearTd);
+
+            const p_StatusTd = document.createElement("td");
+            p_StatusTd.append(person.p_Status);
+            tr.append(p_StatusTd);
+
+            const phone_NumberTd = document.createElement("td");
+            phone_NumberTd.append(person.phone_Number);
+            tr.append(phone_NumberTd);
+
+            const vkTd = document.createElement("td");
+            vkTd.append(person.vK);
+            tr.append(vkTd);
+
+            const instagramTd = document.createElement("td");
+            instagramTd.append(person.instagram);
+            tr.append(instagramTd);
+
+            const cityTd = document.createElement("td");
+            cityTd.append(person.city);
+            tr.append(cityTd);
+
+            return tr;
+        }
+
+
+        async function getMeets() {
+            resetTb('meetsTable');
+            //setTableWidth('#divTab th', 5);
+            document.getElementById('peopleTable').style.display = 'none';
+            document.getElementById('meetsTable').style.display = 'block';
+            const response = await fetch("/api/meets",
+                {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+            if (response.ok) {
+                let meets = await response.json();
+                let rows = document.getElementById("mBody");
+                console.log(meets);
+                meets.forEach(meet => rows.append(rowMeet(meet)));
+                //document.querySelector('#divTab th').style['width'] = 450 / 5+'px';
+            }
+        }
+
+        function rowMeet(meet) {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", meet.id);
+
+            const full_NameTd = document.createElement("td");
+            full_NameTd.append(meet.full_Name);
+            tr.append(full_NameTd);
+
+            const placeTd = document.createElement("td");
+            placeTd.append(meet.place);
+            tr.append(placeTd);
+
+            const cityTd = document.createElement("td");
+            cityTd.append(meet.city);
+            tr.append(cityTd);
+
+            const meet_DateTd = document.createElement("td");
+            meet_DateTd.append(meet.meet_Date);
+            tr.append(meet_DateTd);
+
+            return tr;
+        }
+
+        function wrapper1_able() {
+            if (document.getElementById('wrapper1').style.pointerEvents == 'none') {
+                document.getElementById('wrapper1').style.pointerEvents = 'auto';
+            }
+            else
+                document.getElementById('wrapper1').style.pointerEvents = 'none';
+        }
+
+        function setTableWidth(myTable, rowsN) {
+            let ths = document.querySelectorAll(myTable);
+            for (let th of ths) {
+                th.style.setProperty('width', (550 / rowsN) - 10 + 'px');
+            }
+            //document.getElementById('divTab').style.getPropertyValue('width');
+
+        }
+    </script>
+    <style>
+        html, body {
+            margin: 0px;
+            height: 100%;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd,
+        ol, ul, li, form, table, caption, tr, th, td, article, aside, footer, header {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+        }
+
+        #wrapper1 {
+            max-width: var(--wrapper1-width,900px);
+            padding-left: 16px;
+            padding-right: 16px;
+            margin: auto;
+            z-index: 1;
+            height: 100%;
+        }
+
+        #wrapper2 {
+            margin: auto;
+            z-index: 2;
+            height: 100%;
+        }
+
+
+        /*div,form,aside,h1 {outline-style:dotted}*/
+
+        #wrap {
+            float: left;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 3em;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        #weather {
+            width: 20%;
+            min-width: 150px;
+        }
+
+
+        #navi {
+            float: left;
+            display: inline;
+            width: var(--navi-width,150px);
+            height: 100%
+        }
+
+        #navi__login {
+            display: block;
+            top: 0px;
+        }
+
+            #navi__login > * {
+                display: block;
+            }
+
+
+        #navi__body {
+            display: block;
+        }
+
+        #navigation_menu {
+            height: 500px;
+        }
+
+            #navigation_menu li {
+                list-style-type: none;
+            }
+
+
+        #datapage {
+            float: right;
+            display: inline;
+            width: var(--datapage-width,550px);
+        }
+
+        #divTab {
+            overflow-x: scroll;
+            width: var(--datapage-width);
+        }
+
+            #divTab table {
+                display: none;
+                padding-left: 5px;
+                padding-right: 5px;
+                width: var(--datapage-width);
+            }
+
+            #divTab tr {
+                /*max-width:var(--datapage-width);*/
+            }
+
+            #divTab th:first-child, td:first-child {
+                position: absolute;
+            }
+
+            #divTab th:nth-child(n+1), td:nth-child(n+1) {
+                position: margin-left:100px;
+            }
+
+            #divTab th {
+                /*width:max(150px, min(300px, calc((${this.tableWidth}px - ${this.indexColumnStyle.width}) / ${this.columnCount})));*/
+                min-width: 100px;
+            }
+
+
+        #right-sidebar {
+            float: right;
+            /*width: calc(var(--wrapper1-width)
+    -var(--navi-width)
+    -var(--datapage-width)
+    -32px);*/
+            width: 167px;
+            padding-top: 16px;
+            height: 100%;
+        }
+
+
+
+
+        nav hover {
+            background: dimgrey;
+            color: white;
+        }
+
+        footer {
+            position: absolute;
+            width: 100%;
+            bottom: 0px;
+            text-align: center;
+        }
+
+        #loginBlock {
+            display: none;
+            position: absolute;
+            left: 40%;
+            top: 30%;
+            width: 300px;
+            height: 150px;
+            z-index: 100;
+            border-block: medium;
+            background-color: lightpink;
+            padding-top: 30px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+            #loginBlock:target {
+                display: block;
+            }
+
+        .close {
+            float: right;
+            margin-top: 1%;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+            .close:hover {
+                background: unset;
+            }
+    </style>
+    <style>
+        body {
+            background-color: #0e4d6c;
+        }
+
+        h1 {
+            background-color: #2c4653;
+            color: white;
+            text-shadow: 1px 1px 2px black, 0 0 1em #0e4d6c;
+        }
+
+        #wrapper1 {
+            background-color: #0e4d6c;
+        }
+
+        #wrap {
+            background-color: #e9ddc7;
+        }
+
+
+
+        #divTab tr:first-child {
+            color: white;
+            text-shadow: 1px 1px 2px black, 0 0 1em #0e4d6c;
+            font-weight: bold;
+            background-color: #2c4653;
+        }
+
+        #divTab tr {
+            color: white;
+            text-shadow: 1px 1px 2px black, 0 0 1em #0e4d6c;
+            background-color: #0e4d6c;
+        }
+
+        #divTab th {
+            border-style: solid;
+            border-width: 0 1px 1px 0;
+            border-color: white;
+        }
+
+        #navi {
+            background-color: #e6bf77;
+        }
+
+        #navi__body a {
+            background-color: #b7a075;
+            border-style: solid;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border-top: 1px dashed #333;
+            border-right: 1px dashed #333;
+            border-left: 5px solid #333;
+            text-decoration: none;
+            color: #333;
+        }
+
+            #navi__body a:hover {
+                background-color: #7e6b47;
+            }
+
+            #navi__body a:focus {
+                background-color: #9d875b;
+            }
+
+        #right-sidebar {
+            background-color: #b7a075;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper1">
+        <!--Шапка-->
+        <h1>People journal</h1>
+        <div id="wrapper2">
+
+            <div id="wrap">
+                <div id="navi">
+                    <header id="navi__header"></header>
+                    <!--Пользователь и язык-->
+                    <div id="navi__login">
+                        <a id="userButton" href="#loginBlock">Пользователь</a>
+                        <select id="langSelect">
+                            <option>Ru</option>
+                            <option>Eng</option>
+                        </select>
+                    </div>
+                    <script>
+                        document.getElementById('userButton').addEventListener("click", wrapper1_able);
+                    </script>
+                    <div id="navi__body">
+                        <ul id="navigation_menu">
+                            <li><a onclick="peopleTable" href="#" id="btnPeople">Люди</a></li>
+                            <li><a onclick="meetsTable" href="#" id="btnMeets">Встречи</a></li>
+                            <li><a href="#">История</a></li>
+                        </ul>
+                    </div>
+                    <!--Навигация-->
+                </div>
+
+                <!--Data page-->
+                <div id="datapage">
+                    <header id="datapage__header"></header>
+                    <!--Поиск-->
+                    <div>
+                        <form>
+                            <input type:search placeholder="Введите имя" />
+                        </form>
+                    </div>
+                    <!--Таблица людей-->
+                    <form id="dataForm">
+                        <div id="divTab">
+                            <table id="peopleTable">
+                                <caption>Люди</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Фамилия</th>
+                                        <th>Год рождения</th>
+                                        <th>Статус</th>
+                                        <th>Телефон</th>
+                                        <th>VK</th>
+                                        <th>Instagram</th>
+                                        <th>Город</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pBody">
+                                </tbody>
+                            </table>
+                            <table id="meetsTable">
+                                <caption>Встречи</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Место</th>
+                                        <th>Город</th>
+                                        <th>Дата</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mBody">
+                                </tbody>
+                            </table>
+                            <script>
+                                document.getElementById("btnPeople").addEventListener("click", getPeople);
+                            </script>
+                            <script>
+                                document.getElementById("btnMeets").addEventListener("click", getMeets);
+                            </script>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+
+            <div id="right-sidebar">
+                <header id="right-siderbar-header">
+                </header>
+                <!--Погода-->
+                <aside id="weather">
+
+                    <p>Комментарий к погоде</p>
+                    <a target="_blank" href="https://nochi.com/weather/saint-petersburg-18398">
+                        <img src="https://w.bookcdn.com/weather/picture/1_18398_1_20_137AE9_160_ffffff_333333_08488D_1_ffffff_333333_0_6.png?scode=2&domid=589&anc_id=57808" alt="booked.net" />
+                    </a>
+                </aside>
+            </div>
+            <script>
+
+            </script>
+            <!--Форма входа-->
+        </div>
+    </div>
+    <div id="loginBlock">
+        <a href="#" id="closeLogin" class="close">Close</a>
+        <form method="post" action="postuser" id="loginForm">
+            <h2>Окно входа</h2>
+            <p>
+                Имя:
+                <input type="text" name="name" placeholder="Введите имя" />
+            </p>
+            <p>
+                Пароль:
+                <input type="password" name="password" placeholder="Введите пароль" />
+            </p>
+            <input type="submit" value="Send" />
+        </form>
+        <script>
+            document.getElementById('closeLogin').addEventListener("click", wrapper1_able);
+        </script>
+    </div>
+    <footer>Создатель Павел Борисов. 2022 г.</footer>
+    
+</body>
+</html>

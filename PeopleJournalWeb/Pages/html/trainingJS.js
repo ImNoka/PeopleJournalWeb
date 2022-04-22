@@ -1,0 +1,1 @@
+﻿document.write("<h2>Первая прога JS</h2>")

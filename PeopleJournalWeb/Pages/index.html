@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="height=900">
+    <title>People journal</title>
+    <link rel="stylesheet" href="css/indexScheme.css">
+    <link rel="stylesheet" href="css/lightStyle.css">
+    <script src="lib/jquery/dist/jquery.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+    <div id="wrapper1">
+        <!--Шапка-->
+        <h1>People journal</h1>
+        <div id="wrapper2">
+            <div id="wrap">
+                <div id="navi">
+                    <header id="navi__header"></header>
+                    <!--Пользователь и язык-->
+                    <div id="navi__login">
+                        <div id="navi__login__inner">
+                            <a id="userButton" href="#">Пользователь</a>
+                            <a id="logoutButton" href="#">Выход</a>
+                        </div>
+                        <select id="langSelect">
+                            <option>Ru</option>
+                            <option>Eng</option>
+                        </select>
+                    </div>
+                    <script>
+                        document.getElementById('userButton').
+                            addEventListener("click", () => { wrapper1_able(); $("#loginBlock").show(); });
+                    </script>
+                    <div id="navi__body">
+                        <ul id="navigation_menu">
+                            <li><a onclick="peopleTable" href="#" id="btnPeople">Люди</a></li>
+                            <li><a onclick="meetsTable" href="#" id="btnMeets">Встречи</a></li>
+                            <li><a onclick="historiesTable" href="#" id="btnHistories">История</a></li>
+                        </ul>
+                    </div>
+                    <!--Навигация-->
+                </div>
+
+                <!--Data page-->
+                <div id="datapage">
+                    <header id="datapage__header"></header>
+                    <!--Поиск-->
+                    <div id="divSearcher">
+                        <h3>Поиск по данным</h3>
+                        <form id="formSearcher">
+                            <select id="selectorSearcher" onchange="Searching(this)">
+                            </select>
+                            <script>
+                            </script>
+                            <input id="tableSearcher" type:text placeholder="Введите имя" onkeyup="DoingSearch()" />
+                        </form>
+                        <input id="butAdd" type="button" display="inline" value="Добавить">
+                        <input id="butRefresh" type="button" value=" "/> 
+                        <script>document.getElementById('butRefresh').addEventListener("click", LoadingData);</script>
+                    </div>
+                    
+                    <!--Таблица людей-->
+                    <form id="dataForm">
+                        <div id="outer-divTab">
+                            <div id="divTab">
+                                <table id="peopleTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Имя</th>
+                                            <th>Фамилия</th>
+                                            <th>Год рождения</th>
+                                            <th>Статус</th>
+                                            <th>Телефон</th>
+                                            <th>VK</th>
+                                            <th>Instagram</th>
+                                            <th>Город</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pBody">
+                                    </tbody>
+                                </table>
+                                <table id="meetsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Имя</th>
+                                            <th>Место</th>
+                                            <th>Город</th>
+                                            <th>Дата</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mBody">
+                                    </tbody>
+                                </table>
+                                <table id="historiesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Имя</th>
+                                            <th>Действие</th>
+                                            <th>Дата действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="hBody">
+                                    </tbody>
+                                </table>
+                                <script>
+                                    document.getElementById("btnPeople").addEventListener("click", getPeople);
+                                    document.getElementById("btnMeets").addEventListener("click", getMeets);
+                                    document.getElementById("btnHistories").addEventListener("click", getHistories);
+                                </script>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+
+            <div id="right-sidebar">
+                <header id="right-siderbar-header">
+                </header>
+                <!--Погода-->
+                <aside id="weather">
+
+                    <p>Комментарий к погоде</p>
+                    <a target="_blank" href="https://nochi.com/weather/saint-petersburg-18398">
+                        <img src="https://w.bookcdn.com/weather/picture/1_18398_1_20_137AE9_160_ffffff_333333_08488D_1_ffffff_333333_0_6.png?scode=2&domid=589&anc_id=57808" />
+                    </a>
+                </aside>
+            </div>
+            <script>
+
+            </script>
+            <!--Форма входа-->
+        </div>
+    </div>
+    <div id="loginBlock" class="modal">
+        <a href="#" id="closeLogin" class="close">Close</a>
+        <form method="post" id="loginForm">
+            <h2>Окно входа</h2>
+            <p>
+                Имя:
+                <input type="text" name="name" placeholder="Введите имя" pattern="[A-Za-z]{1,20}|[А-Яа-яЁё]{1,20}" required/>
+            </p>
+            <p>
+                Пароль:
+                <input type="password" name="password" placeholder="Введите пароль" pattern="[A-Za-z0-9]{4,20}|[А-Яа-яЁё0-9]{4,20}" required/>
+            </p>
+            <input id="submitSignIn" class="close" type="submit" value="Login" />
+        </form>
+        <script>
+            document.getElementById('submitSignIn').addEventListener("click", e => {
+                e.preventDefault();
+                console.log("submit event click!");
+                AuthSignIn();
+            });
+            document.getElementById('closeLogin').addEventListener("click", () => {wrapper1_able(); $("#loginBlock").hide()});
+        </script>
+    </div>
+    <footer>Создатель Павел Борисов. 2022 г.</footer>
+</body>
+</html>
