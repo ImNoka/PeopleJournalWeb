@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using PeopleJournalWeb.Controller;
+using PeopleJournalWeb.Controllers;
 using PeopleJournalWeb.Service;
 using Microsoft.AspNetCore.Mvc;
 using PeopleJournalWeb.Model;
@@ -44,5 +44,11 @@ namespace PeopleJournalWeb.Tests
             System.Diagnostics.Debug.WriteLine("Just test");
             Assert.True(true);
         }
+
+        public void DataEditingTest()
+        {
+            TaskHandler taskHandler = new TaskHandler();
+        }
+
     }
 }

@@ -1,33 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PeopleJournalWeb.Model;
+﻿using PeopleJournalWeb.Model;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using PeopleJournalWeb.Interface;
-using PeopleJournalWeb.Service;
 using Newtonsoft.Json;
+using PeopleJournalWeb.Filters;
 
-namespace PeopleJournalWeb.Controller
+
+
+namespace PeopleJournalWeb.Controllers
 {
     internal class QueryManager
     {
+        // Lists, loading from database on request.
         List<ObjModel> People;
         List<ObjModel> Histories;
         List<ObjModel> Meets;
 
-        string connectionString = "Server=DESKTOP-GP81B11\\SQLNOKAINC;Database=FamilyAndFriends;User Id=NokaNew; Password=NDBpass1;" +
-            "Encrypt=false";
+        private readonly object _executeLock = new object();
+
+        // Connection string parts.
+        private string _server;
+        private string _database;
+        private string _dbuser;
+        private string _password;
+        private string _encrypt;
+
+        string connectionString;
         SqlConnection sqlConnection;
 
-        
-        public QueryManager()
+        /// <summary>
+        /// Represents a stack of methods SQL queries. Use connection string parts to create object.
+        /// </summary>
+        /// <param name="server">Server address</param>
+        /// <param name="database">Database name</param>
+        /// <param name="dbuser">Database user</param>
+        /// <param name="password">Database user password</param>
+        /// <param name="encrypt">Enable encrypt. True or false.</param>
+        public QueryManager(string server, string database, string dbuser, string password, string encrypt = "false")
         {
+            _server = server;
+            _database = database;
+            _dbuser = dbuser;
+            _password = password;
+            _encrypt = encrypt;
+            connectionString = $"{_server};{_database};{_dbuser};{_password};{_encrypt}";
             sqlConnection = new SqlConnection(connectionString);
             sqlConnection.Open();
         }
+
+
+        #region Get lists methods
 
         /// <summary>
         /// Get Meets from DB in Task<List<Meet>> format.
@@ -65,6 +87,10 @@ namespace PeopleJournalWeb.Controller
             return Meets;
         }
 
+        /// <summary>
+        /// Get Histories list from DB in Task<List<History>> format.
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<ObjModel>> GetListHistories() 
         {
             Histories = new List<ObjModel>();
@@ -136,35 +162,10 @@ namespace PeopleJournalWeb.Controller
             return People;
         }
 
-        /// <summary>
-        /// Get any table in Task<DataSet> format with using adapter.
-        /// </summary>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        private async Task<DataSet> GetData(string table)
-        {
-            SqlDataAdapter adapter = new SqlDataAdapter(
-                $"SELECT * FROM {table}", sqlConnection);
-            DataSet ds = new DataSet();
-            await Task.Run(() => { adapter.Fill(ds); });
-            return ds;
-        }
+        #endregion
 
-        /// <summary>
-        /// Get people with GetData
-        /// </summary>
-        /// <returns></returns>
-        public DataSet GetPeople()
-        {
-            //SqlCommand command = sqlConnection.CreateCommand();
-            //command.CommandType = CommandType.StoredProcedure;
-            //command.CommandText = "exec GetPersons";
-            //using ()
-            return GetData("Persons").Result;
-        }
-
-
-        public void deletePerson(int id)
+        #region Simple methods withoud returning data
+        public async void DeletePerson(int id)
         {
             SqlCommand sqlCommand = new SqlCommand("DeletePersonById", sqlConnection);
             sqlCommand.CommandType = CommandType.StoredProcedure;
@@ -176,7 +177,7 @@ namespace PeopleJournalWeb.Controller
             sqlCommand.Parameters.Add(idParam);
             sqlCommand.ExecuteNonQuery();
         }
-        public void addPerson(string jsonPerson)
+        public async void AddPerson(string jsonPerson)
         {
             if (jsonPerson == null)
                 throw new ArgumentNullException("Person is empty");
@@ -195,9 +196,9 @@ namespace PeopleJournalWeb.Controller
                 });
                 System.Diagnostics.Debug.WriteLine($"Put completed.");
             }
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
-        public void editPerson(string jsonPerson)
+        public async void EditPerson(string jsonPerson)
         {
             if (jsonPerson == null)
                 throw new ArgumentNullException("Person is empty");
@@ -212,10 +213,9 @@ namespace PeopleJournalWeb.Controller
                     Value = p.GetValue(person)
                 });
             }
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
-
-        public void AddMeet(string jsonMeet)
+        public async void AddMeet(string jsonMeet)
         {
             if (jsonMeet == null)
                 throw new ArgumentNullException("Person is empty");
@@ -232,9 +232,9 @@ namespace PeopleJournalWeb.Controller
                     Value = p.GetValue(meet)
                 });
             }
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
-        public void EditMeet(string jsonMeet)
+        public async void EditMeet(string jsonMeet)
         {
             if (jsonMeet == null)
                 throw new ArgumentNullException("Meet is empty");
@@ -251,9 +251,9 @@ namespace PeopleJournalWeb.Controller
                     Value = p.GetValue(meet)
                 });
             }
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
-        public void deleteMeet(int id)
+        public async void DeleteMeet(int id)
         {
             SqlCommand sqlCommand = new SqlCommand("DeleteMeetById", sqlConnection);
             sqlCommand.CommandType = CommandType.StoredProcedure;
@@ -263,10 +263,9 @@ namespace PeopleJournalWeb.Controller
                 Value = id
             };
             sqlCommand.Parameters.Add(idParam);
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
-
-        public void deleteHistory(int id)
+        public async void DeleteHistory(int id)
         {
             SqlCommand sqlCommand = new SqlCommand("DeleteHistoryId", sqlConnection);
             sqlCommand.CommandType = CommandType.StoredProcedure;
@@ -276,15 +275,24 @@ namespace PeopleJournalWeb.Controller
                 Value = id
             };
             sqlCommand.Parameters.Add(idParam);
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
-        public void clearHistory()
+        public async void ClearHistory()
         {
             SqlCommand sqlCommand = new SqlCommand("ClearHistory", sqlConnection);
             sqlCommand.CommandType = CommandType.StoredProcedure;
-            sqlCommand.ExecuteNonQuery();
+            ExecuteNonQueryWithLock(sqlCommand);
         }
 
+        #endregion
+
+        /// <summary>
+        /// Accesses the database to verify the login and password. 
+        /// If user exists, returns True.
+        /// </summary>
+        /// <param name="jsonUser"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public bool UserLogin(string? jsonUser)
         {
             if (jsonUser == null)
@@ -324,15 +332,13 @@ namespace PeopleJournalWeb.Controller
             return status;
         }
 
-
-        public async void ConnectDB()
+        private void ExecuteNonQueryWithLock(SqlCommand sqlCommand)
         {
-            await sqlConnection.OpenAsync();
+            lock (_executeLock)
+            {
+                sqlCommand.ExecuteNonQuery();
+            }
         }
 
-        public async void DisconnectDB()
-        {
-            await sqlConnection.CloseAsync();
-        }
     }
 }

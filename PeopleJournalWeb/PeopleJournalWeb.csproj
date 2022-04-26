@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="logs\*"/>
-    <Content Include="logs\custom_logs\*"/>
+    <Content Include="logs\*" />
+    <Content Include="logs\custom_logs\*" />
     <Content Include="Pages\css\*" />
     <Content Include="Pages\index.html" />
     <Content Include="js\*" />
@@ -86,6 +86,7 @@
   <ItemGroup>
     <Folder Include="logs\custom_logs\" />
     <Folder Include="ServerConfig\" />
+    <Folder Include="Service\BackendLogging\" />
   </ItemGroup>
 
 </Project>
