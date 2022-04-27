@@ -3,9 +3,9 @@ using PeopleJournalWeb.Controllers;
 using PeopleJournalWeb.Filters;
 using PeopleJournalWeb.Interface;
 
-namespace PeopleJournalWeb.Service
+namespace PeopleJournalWeb.Controllers
 {
-    public class TaskHandler : Controller
+    public class TaskHandlerController : Controller
     {
 
         /// SQL queries manager. Controllers.
@@ -27,7 +27,7 @@ namespace PeopleJournalWeb.Service
         /// Forms a queue of requests and direct them to main controller.
         /// Public methods adds new tasks to queue.
         /// </summary>
-        public TaskHandler()
+        public TaskHandlerController()
         {
             qManager = new QueryManager("","","","","");
             getDataTasks = new List<Task<List<ObjModel>>>();

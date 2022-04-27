@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using PeopleJournalWeb.Service;
+using PeopleJournalWeb.Controllers;
 using PeopleJournalWeb.Model;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using PeopleJournalWeb.Service.Logging;
+using PeopleJournalWeb.Controllers.Logging;
 using Newtonsoft.Json.Linq;
 using PeopleJournalWeb.Filters;
 
@@ -13,7 +13,7 @@ List<User> users = new List<User>();
 
 ListJsonSerializer listJson = new ListJsonSerializer();
 
-TaskHandler taskHandler = new TaskHandler();
+TaskHandlerController taskHandler = new TaskHandlerController();
 
 // Application builder and services.
 #region AppBuilder
@@ -54,7 +54,7 @@ app.UseAuthentication();
 
 #endregion
 
-// Almost all map methods directs requests to TaskHandler
+// Almost all map methods directs requests to TaskHandlerController
 #region Maps
 
 /// <summary>
@@ -131,7 +131,7 @@ app.MapDelete("api/histories/clear", [Authorize] async () =>
 #endregion
 
 /// <summary>
-/// Directs POST method using JSON format to TaskHandler.
+/// Directs POST method using JSON format to TaskHandlerController.
 /// </summary>
 async void ExecutePost(HttpContext context)
 {

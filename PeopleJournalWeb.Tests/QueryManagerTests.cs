@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using PeopleJournalWeb.Controllers;
-using PeopleJournalWeb.Service;
+using PeopleJournalWeb.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using PeopleJournalWeb.Model;
 using PeopleJournalWeb.Interface;
@@ -22,7 +22,7 @@ namespace PeopleJournalWeb.Tests
         {
             // Arrange
             System.Diagnostics.Debug.WriteLine("Creating taskHandler");
-            TaskHandler taskHandler = new TaskHandler();
+            TaskHandlerController taskHandler = new TaskHandlerController();
             System.Diagnostics.Debug.WriteLine("taskHandler created");
             JObject userObj = new JObject(
                 new JProperty("Login","Noka"),
@@ -47,7 +47,7 @@ namespace PeopleJournalWeb.Tests
 
         public void DataEditingTest()
         {
-            TaskHandler taskHandler = new TaskHandler();
+            TaskHandlerController taskHandler = new TaskHandlerController();
         }
 
     }

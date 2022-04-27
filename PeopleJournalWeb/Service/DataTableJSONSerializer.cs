@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Newtonsoft.Json;
 
-namespace PeopleJournalWeb.Service
+namespace PeopleJournalWeb.Controllers
 {
     public class DataTableJSONSerializer
     {

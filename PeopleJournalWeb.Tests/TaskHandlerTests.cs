@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using PeopleJournalWeb.Service;
+using PeopleJournalWeb.Controllers;
 using PeopleJournalWeb.Interface;
 namespace PeopleJournalWeb.Tests
 {
@@ -13,7 +13,7 @@ namespace PeopleJournalWeb.Tests
         [Fact]
         public async void HighLoadTest()
         {
-            TaskHandler taskHandler = new TaskHandler();
+            TaskHandlerController taskHandler = new TaskHandlerController();
             List<string> lists = new List<string>();
             int count = 0;
             //List<Task> tasks = new List<Task>();

@@ -1,4 +1,4 @@
-﻿namespace PeopleJournalWeb.Service.Logging
+﻿namespace PeopleJournalWeb.Controllers.Logging
 {
     public static class FileLoggerExtensions
     {

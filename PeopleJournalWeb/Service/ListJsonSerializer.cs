@@ -1,7 +1,7 @@
 ﻿using PeopleJournalWeb.Interface;
 using Newtonsoft.Json;
 
-namespace PeopleJournalWeb.Service
+namespace PeopleJournalWeb.Controllers
 {
     public class ListJsonSerializer
     {
